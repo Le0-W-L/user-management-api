@@ -1,12 +1,13 @@
 const sequelize = require('./sequelize');
 const connectMongo = require('./mongoose');
+const { User, Role } = require('../models');
 
 async function connDBs() {
     //connect mysql
     try {
         await sequelize.authenticate();
         console.log('MySQL connected!');
-        await sequelize.sync({ alter: true });
+        await sequelize.sync({ alter: false });
         console.log('MySQL models synchronized!');
     }
     catch(err) {
