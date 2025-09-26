@@ -13,9 +13,10 @@ app.use(cors());
 app.use(express.json());
 
 // import routes
-app.get('/', (req, res) => {
-    res.send('API is running...');
-});
+const authRoutes = require('./src/routes/AuthRoutes');
+
+// routes
+app.use('/auth', authRoutes);
 
 // start server
 const PORT = process.env.PORT;
