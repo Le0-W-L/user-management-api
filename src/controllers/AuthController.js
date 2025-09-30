@@ -33,3 +33,25 @@ exports.register = async (req, res) => {
         });
     }
 };
+
+exports.login = async (req, res) => {
+    const { email, password} = req.body;
+    
+    //validations
+    if (!email) {
+        return res.status(422).json({ message: "E-mail é obrigatório!" });
+    }
+    if (!password) {
+        return res.status(422).json({ message: "Senha é obrigatória!" });
+    }
+
+    try {
+        const result = await authService.login(email, password);
+        res.status(result.status).json(result.data);
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message,
+        });
+    }
+}

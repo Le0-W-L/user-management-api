@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const createToken = require("../utils/create-token");
 
 exports.register = async ( name, email, password ) => {
     try {
@@ -34,3 +35,38 @@ exports.register = async ( name, email, password ) => {
         };
     }
 };
+
+exports.login = async (email, password) => {
+    try {
+        const user = await User.findOne({ where: { email } });
+        if(!user) {
+            return {
+                status: 404,
+                data: { message: "Usuário não encontrado!" },
+            };
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if(!passwordMatch) {
+            return {
+                status: 401,
+                data: { message: "Senha inválida!" },
+            };
+        }
+
+        const tokenData = await createToken(user);
+        return {
+            status: 200,
+            data: tokenData
+        };
+    }
+    catch (error) {
+        return {
+            status: 500,
+            data: {
+                message: "Internal server error",
+                error: error.message,
+            }
+        };
+    }
+}
