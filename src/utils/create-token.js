@@ -6,7 +6,7 @@ const createToken = async (user) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        roleId: user.roleId || 3,
+        papel: user.role ? user.role.name : "user", // Adiciona o nome do papel do usuário ao payload
     };
 
     const options = {

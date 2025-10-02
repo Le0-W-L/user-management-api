@@ -1,8 +1,9 @@
 const User = require("../models/User");
+const Role = require("../models/Role");
 const bcrypt = require("bcrypt");
 const createToken = require("../utils/create-token");
 
-exports.register = async ( name, email, password ) => {
+exports.register = async (name, email, password) => {
     try {
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -11,7 +12,7 @@ exports.register = async ( name, email, password ) => {
             name,
             email,
             password: hashedPassword,
-            roleId: 3 // default role: user
+            roleId: 3, // default role: user
         });
 
         return {
@@ -21,11 +22,12 @@ exports.register = async ( name, email, password ) => {
                 user: {
                     id: newUser.id,
                     name: newUser.name,
-                    email: newUser.email
+                    email: newUser.email,
                 },
             },
         };
-    } catch (error) {
+    } 
+    catch (error) {
         return {
             status: 500,
             data: {
@@ -38,8 +40,16 @@ exports.register = async ( name, email, password ) => {
 
 exports.login = async (email, password) => {
     try {
-        const user = await User.findOne({ where: { email } });
-        if(!user) {
+        const user = await User.findOne({ 
+            where: { email },
+            include: [{
+                model: Role,
+                as: "role",
+                attributes: ["name"],
+            }]
+        });
+        
+        if (!user) {
             return {
                 status: 404,
                 data: { message: "Usuário não encontrado!" },
@@ -47,7 +57,7 @@ exports.login = async (email, password) => {
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
-        if(!passwordMatch) {
+        if (!passwordMatch) {
             return {
                 status: 401,
                 data: { message: "Senha inválida!" },
@@ -57,9 +67,47 @@ exports.login = async (email, password) => {
         const tokenData = await createToken(user);
         return {
             status: 200,
-            data: tokenData
+            data: tokenData,
+        };
+    } 
+    catch (error) {
+        return {
+            status: 500,
+            data: {
+                message: "Internal server error",
+                error: error.message,
+            },
         };
     }
+};
+
+exports.getProfile = async (userId) => {
+    try {
+        const user = await User.findByPk(userId, {
+            include: [{
+                model: Role,
+                as: "role",
+                attributes: ["name"],
+            }]
+        });
+
+        if (!user) {
+            return {
+                status: 404,
+                data: { message: "Usuário não encontrado!" },
+            };
+        }
+
+        return {
+            status: 200,
+            data: {
+                message: "Informações do perfil: ",
+                name: user.name,
+                email: user.email,
+                papel: user.role.name,
+            },
+        };
+    } 
     catch (error) {
         return {
             status: 500,
@@ -67,6 +115,6 @@ exports.login = async (email, password) => {
                 message: "Internal server error",
                 error: error.message,
             }
-        };
+        }
     }
-}
+};
