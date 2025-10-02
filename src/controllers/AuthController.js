@@ -26,7 +26,8 @@ exports.register = async (req, res) => {
     try {
         const result = await authService.register(name, email, password);
         res.status(result.status).json(result.data);
-    } catch (error) {
+    } 
+    catch (error) {
         res.status(500).json({
             message: "Internal server error",
             error: error.message,
@@ -48,7 +49,22 @@ exports.login = async (req, res) => {
     try {
         const result = await authService.login(email, password);
         res.status(result.status).json(result.data);
-    } catch (error) {
+    } 
+    catch (error) {
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message,
+        });
+    }
+}
+
+exports.getProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const result = await authService.getProfile(userId);
+        res.status(result.status).json(result.data);
+    }
+    catch (error) {
         res.status(500).json({
             message: "Internal server error",
             error: error.message,
