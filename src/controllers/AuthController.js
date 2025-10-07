@@ -1,3 +1,4 @@
+const logService = require("../services/LogService");
 const authService = require("../services/AuthService");
 const User = require("../models/User");
 
@@ -25,6 +26,12 @@ exports.register = async (req, res) => {
 
     try {
         const result = await authService.register(name, email, password);
+        
+        if(result.status === 201) {
+            const newUser = result.data.user;
+            await logService.createLog(newUser.id, "CREATE_USER", req.ip);
+        }
+
         res.status(result.status).json(result.data);
     } 
     catch (error) {
@@ -48,6 +55,12 @@ exports.login = async (req, res) => {
 
     try {
         const result = await authService.login(email, password);
+
+        if(result.status === 200) {
+            const user = result.data.user;
+            await logService.createLog(user.id, "LOGIN", req.ip);
+        }
+
         res.status(result.status).json(result.data);
     } 
     catch (error) {
