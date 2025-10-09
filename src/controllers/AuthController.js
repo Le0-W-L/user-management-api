@@ -29,7 +29,7 @@ exports.register = async (req, res) => {
         
         if(result.status === 201) {
             const newUser = result.data.user;
-            await logService.createLog(newUser.id, "CREATE_USER", req.ip);
+            await logService.createLog(newUser, "CREATE_USER", req.ip);
         }
 
         res.status(result.status).json(result.data);
@@ -58,7 +58,7 @@ exports.login = async (req, res) => {
 
         if(result.status === 200) {
             const user = result.data.user;
-            await logService.createLog(user.id, "LOGIN", req.ip);
+            await logService.createLog(user, "LOGIN", req.ip);
         }
 
         res.status(result.status).json(result.data);

@@ -23,6 +23,7 @@ exports.register = async (name, email, password) => {
                     id: newUser.id,
                     name: newUser.name,
                     email: newUser.email,
+                    role: "user", // default role
                 },
             },
         };

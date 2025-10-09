@@ -2,15 +2,17 @@ const Log = require("../models/Logs");
 
 /**
  * Cria um novo registo de log no banco de dados.
- * @param {string} userId 
+ * @param {object} user 
  * @param {string} action 
  * @param {string} ipAddress 
  */
 
-exports.createLog = async (userId, action, ipAddress) => {
+exports.createLog = async (user, action, ipAddress) => {
     try {
         const log = new Log({
-            userId,
+            userId: user.id,
+            userName: user.name,
+            userRole: user.role,
             action,
             ipAddress,
         });

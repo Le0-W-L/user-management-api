@@ -6,6 +6,14 @@ const logSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+         userName: {
+            type: String,
+            required: true,
+        },
+        userRole: {
+            type: String,
+            required: true,
+        },
         action: {
             type: String,
             enum: [
@@ -14,6 +22,10 @@ const logSchema = new mongoose.Schema(
                 "CREATE_USER",
                 "DELETE_USER",
                 "UPDATE_USER",
+                "LIST_USERS",
+                "LIST_ROLES",
+                "CREATE_ROLE",
+                "LIST_LOGS",
             ],
             required: true,
         },
